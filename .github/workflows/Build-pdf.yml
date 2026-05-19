@@ -1,46 +1,15 @@
-name: Lindelöf Build - μ(1/2) Anchor v1.0
-on: [push]
-
+name: Build-pdf
+on: [push, workflow_dispatch]
 jobs:
   verify-and-build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
+    container: sagemath/sagemath:latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      
-      - name: Firewall 1 - SHA Check
+      - uses: actions/checkout@v4
+      - name: Verify Battle Plan v1.6
+        run: sage bin/verify_battleplan_v1.6.sage
+      - name: Build PDF
+        if: success()
         run: |
-          echo "=== BATTLE PLAN v1.6: SHA FIREWALL ==="
-          if [ -f SHA256SUMS ]; then
-            sha256sum -c SHA256SUMS
-          else
-            echo "SHA256SUMS missing. Create on laptop after locking mu_output.txt"
-            echo "=== CURRENT FILE SHAS ==="
-            sha256sum code/verify.py || true
-            sha256sum code/constants.py || true
-            sha256sum code/Makefile || true
-            sha256sum supplement/mu_output.txt || echo "mu_output.txt missing - expected"
-          fi
-      
-      - name: Firewall 2 - Lindelöf Gate
-        run: |
-          echo "=== BATTLE PLAN v1.6: PYTHON FIREWALL ==="
-          python code/verify.py
-        
-      - name: Firewall 3 - C Build Gate
-        run: |
-          echo "=== BATTLE PLAN v1.6: MAKE FIREWALL ==="
-          cd code && make || echo "C build skipped - mu_sieve.c not present yet"
-        
-      - name: Build Paper - Lindelöf
-        uses: xu-cheng/latex-action@v3
-        with:
-          root_file: paper/lindelof.tex
-          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode
-        continue-on-error: true
-          
-      - name: Upload PDF Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Lindelof-v1.0-${{ github.sha }}
-          path: paper/lindelof.pdf
+          cd paper
+          pdflatex lindelof.tex
