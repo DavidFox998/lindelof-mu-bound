@@ -1,0 +1,19 @@
+{
+  "tendon_B": {
+    "status": "hydrated",
+    "prime_count": 4
+  },
+  "tendon_E": {
+    "C_alpha0": 8.629454156644538
+  },
+  "tendon_F": {
+    "conductor": 143,
+    "genus": 13,
+    "discriminant": 5719,
+    "kappa": 4.843301419
+  },
+  "tendon_G": {
+    "sha_v1.6": "594de23659bdeccc5bbf51b25fae78b05b92bf351b8a13eff33b563bbf487010",
+    "sha_canon": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
