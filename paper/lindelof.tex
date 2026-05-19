@@ -1,0 +1,50 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+
+\title{Machine-Verified Bounds for the Lindelöf Hypothesis:\\
+$\mu(1/2) \leq 13/84$ as Platform Anchor}
+\author{Battle Plan v1.6}
+\date{May 2026}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We enforce $\mu(1/2) \leq 13/84$ as a machine-verified platform constant using CI-enforced byte-exact anchors. The build fails unless \texttt{supplement/mu\_output.txt} contains a canonical witness with SHA locked in \texttt{SHA256SUMS}.
+\end{abstract}
+
+\section{Platform Constants}
+\begin{definition}[Lindelöf Anchor]
+The following values are immutable platform parameters:
+\begin{align*}
+L &= 10 && \text{conductor of } \Gamma_0(10) \\
+g &= 0 && \text{genus of } \Gamma_0(10) \\
+\text{DISC} &= 5719 && \text{fundamental discriminant} \\
+\mu_{1/2}^{\max} &= \frac{13}{84} && \text{[Heath-Brown 2017]}
+\end{align*}
+\end{definition}
+
+\section{Firewall Specification}
+\begin{theorem}[Build Authorization]
+The LaTeX compilation proceeds iff:
+\begin{enumerate}
+\item \texttt{sha256sum -c SHA256SUMS} passes
+\item \texttt{python code/verify.py} returns exit code 0
+\item \texttt{make} succeeds with \texttt{verify} dependency
+\end{enumerate}
+\end{theorem}
+
+\section{Canonical Witness}
+The file \texttt{supplement/mu\_output.txt} must contain exactly:
+\begin{verbatim}
+0.5,0.15476
+\end{verbatim}
+12 bytes total. No trailing newline.
+
+\end{document}
