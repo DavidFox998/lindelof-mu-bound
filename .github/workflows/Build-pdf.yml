@@ -1,31 +1,27 @@
 name: Verify-and-Build
 on: [push, workflow_dispatch]
 jobs:
-  verify-and-build:
+  verify:
+    name: Verify Battle Plan v1.6
     runs-on: ubuntu-latest
     container: sagemath/sagemath:latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      
+      - uses: actions/checkout@v4
       - name: Verify Battle Plan v1.6
         run: sage bin/verify_battleplan_v1.6.sage
-      
-      - name: Install TeXLive for PDF build
-        if: success()
-        run: |
-          apt-get update
-          apt-get install -y texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
-          apt-get install -y latexmk
-      
+  
+  build-pdf:
+    name: Build PDF
+    needs: verify  # "No μ-bound → No build" - only runs if verify passes
+    runs-on: ubuntu-latest
+    container: texlive/texlive:latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Build PDF
-        if: success()
         run: |
           cd paper
           latexmk -pdf -interaction=nonstopmode lindelof.tex
-      
       - name: Upload PDF Artifact
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: lindelof-mu-bound-v1.6-verified
